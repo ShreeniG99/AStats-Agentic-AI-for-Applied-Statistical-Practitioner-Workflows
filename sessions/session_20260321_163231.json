@@ -1,0 +1,17 @@
+{
+  "session_id": "20260321_163231",
+  "corrections": [
+    {
+      "timestamp": "2026-03-21T16:32:31.104356",
+      "dataset": "astats_datasets/test_datasets/06_eeg_alpha_power_wide.csv",
+      "query": "compare alpha power across brain regions",
+      "recommended_test": "Friedman test (wide)",
+      "action": "accepted",
+      "override_test": null,
+      "override_reason": null,
+      "final_test": "Friedman test (wide)",
+      "p_value": 0.0,
+      "effect_size": 0.6953
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "session_id": "20260321_163322",
+  "corrections": [
+    {
+      "timestamp": "2026-03-21T16:33:22.700474",
+      "dataset": "astats_datasets/test_datasets/01_antidepressant_trial.csv",
+      "query": "compare HDRS score between treatment groups",
+      "recommended_test": "Mann-Whitney U",
+      "action": "accepted",
+      "override_test": null,
+      "override_reason": null,
+      "final_test": "Mann-Whitney U",
+      "p_value": 0.0,
+      "effect_size": -0.5412
+    }
+  ]
+}

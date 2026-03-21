@@ -1,0 +1,17 @@
+{
+  "session_id": "20260321_154445",
+  "corrections": [
+    {
+      "timestamp": "2026-03-21T15:44:45.841817",
+      "dataset": "astats_datasets/test_datasets/02_sleep_deprivation_longitudinal.csv",
+      "query": "compare ReactionTime across days within subjects",
+      "recommended_test": "Friedman test",
+      "action": "accepted",
+      "override_test": null,
+      "override_reason": null,
+      "final_test": "Friedman test",
+      "p_value": 0.0,
+      "effect_size": 0.6338
+    }
+  ]
+}

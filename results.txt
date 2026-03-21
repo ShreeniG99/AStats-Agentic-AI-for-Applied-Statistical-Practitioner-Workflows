@@ -1,0 +1,28 @@
+AStats Analysis Report
+Generated: 2026-03-21 16:33:14
+============================================================
+Dataset:       astats_datasets/test_datasets/01_antidepressant_trial.csv
+Query:         compare HDRS score between treatment groups
+Design:        independent
+Outcome col:   HDRS_score
+Group col:     treatment
+N groups:      2
+
+ASSUMPTIONS
+  Normality:      Met
+  Equal variance: Met
+  Sample size:    n=93
+
+RESULTS
+  Test:        Independent t-test
+  Statistic:   4.6221
+  p-value:     0.0
+  Significant: Yes (alpha=0.05)
+  Effect size: 0.9591 (cohen_d, large)
+
+RATIONALE
+  Independent t-test: two independent groups, normality satisfied, equal variances confirmed by Levene's test.
+
+METHODS PARAGRAPH
+An independent samples t-test was conducted to compare HDRS_score between Placebo (n=45) and Drug (n=48). Normality was assessed using the Shapiro-Wilk test. Levene's test confirmed equal variances. The result was statistically significant (t(91)=4.622, p=0.0000). Effect size was large (Cohen's d=0.959).
+============================================================

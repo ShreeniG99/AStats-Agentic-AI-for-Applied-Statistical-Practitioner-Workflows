@@ -1,0 +1,17 @@
+{
+  "session_id": "20260321_163229",
+  "corrections": [
+    {
+      "timestamp": "2026-03-21T16:32:29.685517",
+      "dataset": "astats_datasets/test_datasets/05_cognitive_load_RT.csv",
+      "query": "compare RT across conditions",
+      "recommended_test": "Kruskal-Wallis H",
+      "action": "accepted",
+      "override_test": null,
+      "override_reason": null,
+      "final_test": "Kruskal-Wallis H",
+      "p_value": 0.0,
+      "effect_size": 0.1782
+    }
+  ]
+}

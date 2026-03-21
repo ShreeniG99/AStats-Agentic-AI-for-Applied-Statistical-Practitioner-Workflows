@@ -1,0 +1,17 @@
+{
+  "session_id": "20260321_163233",
+  "corrections": [
+    {
+      "timestamp": "2026-03-21T16:32:33.939980",
+      "dataset": "astats_datasets/test_datasets/08_hepatitis_B_ADR.csv",
+      "query": "compare ADR severity scores across drugs",
+      "recommended_test": "Kruskal-Wallis H",
+      "action": "accepted",
+      "override_test": null,
+      "override_reason": null,
+      "final_test": "Kruskal-Wallis H",
+      "p_value": 0.0036,
+      "effect_size": 0.0608
+    }
+  ]
+}

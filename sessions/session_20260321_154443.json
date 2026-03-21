@@ -1,0 +1,17 @@
+{
+  "session_id": "20260321_154443",
+  "corrections": [
+    {
+      "timestamp": "2026-03-21T15:44:43.498540",
+      "dataset": "astats_datasets/test_datasets/01_antidepressant_trial.csv",
+      "query": "compare HDRS score between treatment groups",
+      "recommended_test": "Independent t-test",
+      "action": "accepted",
+      "override_test": null,
+      "override_reason": null,
+      "final_test": "Independent t-test",
+      "p_value": 0.8829,
+      "effect_size": -0.0307
+    }
+  ]
+}
