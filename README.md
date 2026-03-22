@@ -20,7 +20,7 @@ AStats handles all three: it understands the question, detects the data structur
 
 ## What Makes This Different
 
-| Feature | GPT-4.1 | Utkarsh's PoC | Atta's PoC | **AStats** |
+| Feature | GPT-4.1 | Utkarsh's PoC | Atta's PoC | **AStats (My PoC)** |
 |---|---|---|---|---|
 | NL query parsing | Yes | No | Yes | ✓ |
 | Data structure inference | Partial | Yes | No | ✓ |
