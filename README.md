@@ -18,21 +18,11 @@ AStats handles all three: it understands the question, detects the data structur
 
 ---
 
-## What Makes This Different
-
-| Feature | GPT-4.1 | Utkarsh's PoC | Atta's PoC | **AStats (My PoC)** |
-|---|---|---|---|---|
-| NL query parsing | Yes | No | Yes | ✓ |
-| Data structure inference | Partial | Yes | No | ✓ |
-| Assumption checking | Partial | Yes | No | ✓ |
-| Test execution + effect size | Yes | Yes | No | ✓ |
-| Post-hoc tests (auto-triggered) | No | No | No | ✓ |
-| Practitioner feedback loop | No | No | No | ✓ |
-| Multi-turn session support | No | No | No | ✓ |
-| Session logging (DPO-compatible) | No | No | No | ✓ |
-| Plain-language explanation (offline) | No | No | No | ✓ |
-| Methods paragraph (copy-paste ready) | Yes | Yes | No | ✓ |
-| Multiple output modes | No | No | No | ✓ |
+AStats is an end-to-end agentic statistical analysis system. You give it a dataset and a plain-language question. It figures out the right test, runs it, explains the result, and — before finalising anything — puts the practitioner in control of the final decision.
+Compared to naive LLM approaches (e.g. asking GPT-4.1 directly):
+A benchmark on 13 structured test scenarios showed that directly prompting a frontier LLM passes 45% of cases. The main failure modes are skipping assumption checks entirely and confusing independent groups with repeated measurements. AStats's structured pipeline passes 69% on the same scenarios, and the 4 remaining failures are documented edge cases involving borderline normality judgments — not structural bugs.
+Compared to recipe-driven GUI tools (JASP, Jamovi):
+These tools are well-validated and widely used. AStats is not trying to replace them. The gap it fills is different: they do not understand natural language, they have no mechanism for the practitioner to correct a recommendation mid-analysis, and they produce no audit trail of the decisions made. AStats is designed for the researcher who wants to ask a question in plain English, understand why a particular test was chosen, and record their own judgment alongside the automated result.
 
 ---
 
