@@ -17,6 +17,7 @@ Most automated statistical tools share the same failure mode: they jump to a res
 AStats handles all three: it understands the question, detects the data structure, picks the right test, and lets the practitioner correct it when they know something the algorithm does not.
 
 ---
+## Here's What The Prototype Does:
 
 AStats is an end-to-end agentic statistical analysis system. You give it a dataset and a plain-language question. It figures out the right test, runs it, explains the result, and — before finalising anything — puts the practitioner in control of the final decision.
 Compared to naive LLM approaches (e.g. asking GPT-4.1 directly):
