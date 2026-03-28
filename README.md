@@ -8,22 +8,13 @@
 
 ## The Problem
 
-Most automated statistical tools share the same failure mode: they jump to a result without checking whether it is appropriate, and they give the researcher no way to push back. Three specific problems come up repeatedly:
+Most automated statistical tools share the same failure mode: they jump to a result without checking whether it is appropriate, and give the researcher no way to push back. Three problems come up repeatedly:
 
-- **LLMs skip assumption checking.** A benchmark against GPT-4.1 on 13 structured test scenarios showed GPT-4.1 passing 45% vs AStats at 69%. The main failures: no normality checks, and confusing independent groups with repeated measurements.
-- **Existing tools (JASP, Jamovi)** do not understand natural language, cannot adapt to context, and offer no correction mechanism.
+- **LLMs skip assumption checking.** A benchmark on 13 structured test scenarios showed that directly prompting a frontier LLM passes 45% of cases. Main failure modes: no normality checks, treating repeated measures as independent groups, no pseudoreplication detection.
+- **Recipe-driven GUI tools (JASP, Jamovi)** do not understand natural language, cannot adapt to context, and offer no correction mechanism when the practitioner knows something the tool does not.
 - **Pseudoreplication** — treating repeated measurements on the same person as independent observations — inflates effective sample size by up to 10x. Most automated tools have no check for this.
 
-AStats handles all three: it understands the question, detects the data structure, picks the right test, and lets the practitioner correct it when they know something the algorithm does not.
-
----
-## Here's What The Prototype Does:
-
-AStats is an end-to-end agentic statistical analysis system. You give it a dataset and a plain-language question. It figures out the right test, runs it, explains the result, and — before finalising anything — puts the practitioner in control of the final decision.
-Compared to naive LLM approaches (e.g. asking GPT-4.1 directly):
-A benchmark on 13 structured test scenarios showed that directly prompting a frontier LLM passes 45% of cases. The main failure modes are skipping assumption checks entirely and confusing independent groups with repeated measurements. AStats's structured pipeline passes 69% on the same scenarios, and the 4 remaining failures are documented edge cases involving borderline normality judgments — not structural bugs.
-Compared to recipe-driven GUI tools (JASP, Jamovi):
-These tools are well-validated and widely used. AStats is not trying to replace them. The gap it fills is different: they do not understand natural language, they have no mechanism for the practitioner to correct a recommendation mid-analysis, and they produce no audit trail of the decisions made. AStats is designed for the researcher who wants to ask a question in plain English, understand why a particular test was chosen, and record their own judgment alongside the automated result.
+AStats handles all three: it understands the question, detects the data structure, picks the right test, and lets the practitioner correct it.
 
 ---
 
@@ -71,26 +62,18 @@ User Query (natural language)
 ## Quick Start
 
 ```bash
-# Clone
 git clone https://github.com/ShreeniG99/AStats-Agentic-AI-for-Applied-Statistical-Practitioner-Workflows.git
 cd AStats-Agentic-AI-for-Applied-Statistical-Practitioner-Workflows
 
-# Create virtual environment
 python -m venv venv
 
-# Activate (Windows)
+# Windows
 venv\Scripts\activate
-
-# Activate (macOS / Linux)
+# macOS / Linux
 source venv/bin/activate
 
-# Install dependencies
 pip install -r requirements.txt
-
-# Generate test datasets
 python generate_datasets.py
-
-# Run the benchmark to verify everything works
 python benchmark/run_benchmark.py
 ```
 
@@ -114,10 +97,10 @@ When the menu appears:
   [Q] Quit
 ```
 
-Press **W** to get a full plain-language explanation (works offline, no API key needed).  
-Press **O** to override — choose from 9 tests, give a reason, the decision is saved to the session log.
+Press **W** for a full plain-language explanation (works offline, no API key needed).
+Press **O** to override — choose from 9 tests, give a reason, saved to session log.
 
-### Auto mode (no prompts)
+### Auto mode
 
 ```bash
 python -m astats.cli analyze test_datasets/01_antidepressant_trial.csv "compare HDRS score between treatment groups" --auto
@@ -126,45 +109,60 @@ python -m astats.cli analyze test_datasets/01_antidepressant_trial.csv "compare 
 ### Output formats
 
 ```bash
-# Default — rich terminal with colours and boxes
-python -m astats.cli analyze data.csv "query" --auto
+# Rich terminal (default)
+python -m astats.cli analyze test_datasets/01_antidepressant_trial.csv "compare HDRS score between treatment groups" --auto
 
-# Plain text — no colours, works in any terminal or log file
-python -m astats.cli analyze data.csv "query" --auto --output plain
+# Plain text
+python -m astats.cli analyze test_datasets/01_antidepressant_trial.csv "compare HDRS score between treatment groups" --auto --output plain
 
-# JSON — machine-readable, pipe to other tools
-python -m astats.cli analyze data.csv "query" --auto --output json
+# JSON — machine-readable
+python -m astats.cli analyze test_datasets/01_antidepressant_trial.csv "compare HDRS score between treatment groups" --auto --output json
 
-# Methods paragraph only — copy straight into your paper
-python -m astats.cli analyze data.csv "query" --auto --output methods
+# Methods paragraph only — paste into your paper
+python -m astats.cli analyze test_datasets/01_antidepressant_trial.csv "compare HDRS score between treatment groups" --auto --output methods
 ```
+
+### Multi-LLM backend support
+
+The W (explain) feature supports four backends via the `--llm` flag:
+
+```bash
+python -m astats.cli analyze test_datasets/01_antidepressant_trial.csv "compare HDRS score between treatment groups" --llm claude
+python -m astats.cli analyze test_datasets/01_antidepressant_trial.csv "compare HDRS score between treatment groups" --llm codex
+python -m astats.cli analyze test_datasets/01_antidepressant_trial.csv "compare HDRS score between treatment groups" --llm ollama
+python -m astats.cli analyze test_datasets/01_antidepressant_trial.csv "compare HDRS score between treatment groups" --llm offline
+```
+
+| Flag | Model | Requires |
+|---|---|---|
+| `--llm claude` | claude-sonnet-4-20250514 | `ANTHROPIC_API_KEY` |
+| `--llm codex` | gpt-4o | `OPENAI_API_KEY` |
+| `--llm ollama` | mistral (configurable) | Local Ollama install |
+| `--llm offline` | Built-in (all 9 tests) | Nothing — default |
 
 ### Force a specific test
 
 ```bash
-# See all available tests
 python -m astats.cli list-tests
-
-# Force a specific test regardless of auto-selection
-python -m astats.cli analyze data.csv "query" --auto --test "Mann-Whitney U"
+python -m astats.cli analyze test_datasets/01_antidepressant_trial.csv "compare HDRS score between treatment groups" --auto --test "Mann-Whitney U"
 ```
 
 ### Other options
 
 ```bash
 # Change significance level
-python -m astats.cli analyze data.csv "query" --auto --alpha 0.01
+python -m astats.cli analyze test_datasets/08_hepatitis_B_ADR.csv "compare ADR severity scores across drugs" --auto --alpha 0.01
 
-# Save full report to a file
-python -m astats.cli analyze data.csv "query" --auto --save report.txt
+# Save full report
+python -m astats.cli analyze test_datasets/01_antidepressant_trial.csv "compare HDRS score between treatment groups" --auto --save report.txt
 
-# Show data summary table before analysis
-python -m astats.cli analyze data.csv "query" --auto --summary
+# Show data summary before analysis
+python -m astats.cli analyze test_datasets/01_antidepressant_trial.csv "compare HDRS score between treatment groups" --auto --summary
 
 # View all past sessions
 python -m astats.cli sessions
 
-# See full detail of a specific session
+# Full detail of a session
 python -m astats.cli session-detail sessions/session_XXXXXXXX.json
 ```
 
@@ -172,7 +170,7 @@ python -m astats.cli session-detail sessions/session_XXXXXXXX.json
 
 ## Example Output
 
-**Dataset:** `01_antidepressant_trial.csv` — 93 patients, Placebo vs Drug, HDRS depression scores  
+**Dataset:** `01_antidepressant_trial.csv` — 93 patients, Placebo vs Drug, HDRS scores
 **Query:** `"compare HDRS score between treatment groups"`
 
 ```
@@ -198,34 +196,8 @@ python -m astats.cli session-detail sessions/session_XXXXXXXX.json
 │ An independent samples t-test was conducted to compare          │
 │ HDRS_score between Placebo (n=45) and Drug (n=48).              │
 │ Normality was confirmed via Shapiro-Wilk. Levene's test         │
-│ confirmed equal variances. The result was statistically         │
-│ significant (t(91)=4.622, p=0.0000). Effect size was large      │
-│ (Cohen's d=0.959).                                              │
+│ confirmed equal variances. t(91)=4.622, p=0.0000, d=0.959.     │
 ╰─────────────────────────────────────────────────────────────────╯
-```
-
-**JSON output** (`--output json`):
-
-```json
-{
-  "intent": "compare",
-  "structure": {
-    "design": "independent",
-    "n_groups": 2,
-    "outcome_col": "HDRS_score",
-    "group_col": "treatment"
-  },
-  "result": {
-    "test_name": "Independent t-test",
-    "statistic": 4.6221,
-    "p_value": 0.0,
-    "significant": true,
-    "effect_size": 0.9591,
-    "effect_label": "cohen_d",
-    "effect_magnitude": "large",
-    "methods_paragraph": "An independent samples t-test..."
-  }
-}
 ```
 
 ---
@@ -244,26 +216,33 @@ python -m astats.cli session-detail sessions/session_XXXXXXXX.json
 | Welch's ANOVA | 3+ independent groups, normal, unequal variance | η² |
 | Kruskal-Wallis H | 3+ independent groups, non-normal | η²H |
 
-Post-hoc tests (Tukey HSD, Bonferroni, Dunn's) are triggered automatically after significant ANOVA or Kruskal-Wallis — no extra command needed.
+Post-hoc tests (Tukey HSD, Bonferroni, Dunn's) are triggered automatically after significant ANOVA or Kruskal-Wallis.
 
 ---
 
-## Test Datasets
+## Datasets
 
-Eight clinically grounded datasets included, each covering a different analysis path in the pipeline:
+AStats has been validated on 15 datasets — 9 synthetic clinical datasets covering every analysis path, plus 6 real published datasets:
 
-| Dataset | Study Design | Expected Test |
-|---|---|---|
-| `01_antidepressant_trial.csv` | 93-patient RCT, Placebo vs Drug, HDRS scores | Independent t-test |
-| `02_sleep_deprivation_longitudinal.csv` | 20 subjects × 9 days, modelled on Belenky et al. (2003) | Friedman test |
-| `03_cognitive_rehab_pre_post.csv` | 35 stroke patients, Pre/Post MoCA scores | Paired t-test |
-| `04_pain_management_4groups.csv` | 4-arm pain trial, VAS scores | One-way ANOVA |
-| `05_cognitive_load_RT.csv` | 3 conditions, log-normal reaction time data | Kruskal-Wallis H |
-| `06_eeg_alpha_power_wide.csv` | 28 subjects, 5 scalp regions, wide-format | Friedman (wide) |
-| `07_crp_cognitive_decline.csv` | CRP vs MMSE cognitive scores, 80 elderly patients | Correlation |
-| `08_hepatitis_B_ADR.csv` | 155 patients, 3 HBV drugs, ADR severity scores | Kruskal-Wallis H |
+| Dataset | Design | n | Result |
+|---|---|---|---|
+| `01_antidepressant_trial.csv` | Independent, 2 groups | 93 | t(91)=4.622, p<.001, d=0.96 |
+| `02_sleep_deprivation_longitudinal.csv` | Repeated measures, 9 days | 180 | Friedman χ²=104.3, W=0.65 |
+| `03_cognitive_rehab_pre_post.csv` | Paired, 2 conditions | 35 | t(34)=12.2, p<.001, d=2.05 |
+| `04_pain_management_4groups.csv` | Independent, 4 groups | 160 | F(3,156)=19.8, p<.001, η²=0.27 |
+| `05_cognitive_load_RT.csv` | Independent, skewed | 150 | H(2)=38.4, p<.001, η²H=0.18 |
+| `06_eeg_alpha_power_wide.csv` | Wide-format, 5 regions | 28 | Friedman χ²=28.1, W=0.70 |
+| `07_crp_cognitive_decline.csv` | Correlation | 80 | Intent: correlate (correctly flagged) |
+| `08_hepatitis_B_ADR.csv` | Independent, 3 drugs | 155 | H(2)=11.4, p=.004, η²H=0.06 |
+| `09_sleepstudy_real.csv` ★ | Repeated measures, 10 days | 180 | Friedman χ²=135.8, p<.001, **W=0.839** |
+| `10_iris.csv` ★ | Independent, 3 species | 150 | Welch ANOVA F=1180.2, p<.001 |
+| `11_birthweight.csv` | Independent, 2 groups | 189 | t(187)=-2.89, p=.004, d=0.43 |
+| `12_toothgrowth.csv` ★ | Independent, 2 supplements | 60 | Mann-Whitney p=0.065, r=0.28 |
+| `13_plantgrowth.csv` ★ | Independent, 3 groups | 30 | F(2,27)=4.85, p=.016, η²=0.26 |
+| `14_chickweight_longitudinal.csv` ★ | Repeated measures, 4 days | 40 | Friedman χ²=28.9, p<.001, **W=0.964** |
+| `15_congruency_RT.csv` ★ | Paired, 2 conditions | 48 | t(23)=-19.4, p<.001, d=3.97 |
 
-Regenerate all datasets from scratch:
+★ Real published dataset validated against the literature.
 
 ```bash
 python generate_datasets.py
@@ -277,7 +256,7 @@ python generate_datasets.py
 Results: 9/13 passed (69.2%)
 ```
 
-The 4 failures are documented statistical judgment calls — edge cases involving borderline normality decisions where experienced statisticians disagree. These same 3 cases appear as known failures in Utkarsh's prototype. The benchmark tracks them honestly rather than working around them.
+The 4 failures are documented statistical judgment calls — borderline normality edge cases where experienced statisticians genuinely disagree. They are tracked honestly rather than worked around.
 
 ```bash
 python benchmark/run_benchmark.py
@@ -287,16 +266,16 @@ python benchmark/run_benchmark.py
 
 ## The Human-in-the-Loop Design
 
-The practitioner feedback loop is the central contribution — the piece that does not exist in any other prototype.
+The practitioner feedback loop is the central contribution of this project.
 
-Every analysis pauses before finalising and shows the practitioner the recommendation and reasoning. They can:
+Every analysis pauses before finalising. The practitioner can:
 
 - **Accept** — logged and complete
 - **Override** — choose any of 9 tests, give a reason, recorded
-- **Explain** — full plain-language explanation, offline, for all 9 tests
-- **Correct** — flag that the data is actually non-normal, or actually repeated measures
+- **Explain** — full plain-language explanation offline for all 9 tests
+- **Correct** — flag that data is actually non-normal, or actually repeated measures
 
-**Every interaction is saved:**
+Every interaction is saved:
 
 ```json
 {
@@ -304,7 +283,7 @@ Every analysis pauses before finalising and shows the practitioner the recommend
   "corrections": [
     {
       "timestamp": "2026-03-21T15:44:43",
-      "dataset": "data.csv",
+      "dataset": "01_antidepressant_trial.csv",
       "query": "compare HDRS score between groups",
       "recommended_test": "Independent t-test",
       "action": "overridden",
@@ -318,7 +297,7 @@ Every analysis pauses before finalising and shows the practitioner the recommend
 }
 ```
 
-These correction logs are structured as **(rejected, accepted, reason)** triples — DPO-compatible preference data that can be used to fine-tune a local open-weight model as the project matures.
+These correction logs are structured as **(rejected, accepted, reason)** triples — DPO-compatible preference data that can improve the system over time.
 
 ---
 
@@ -333,10 +312,11 @@ AStats/
 │   ├── assumptions.py      Shapiro-Wilk, Levene's, sample adequacy
 │   ├── tests.py            Test selection, execution, effect sizes
 │   ├── feedback.py         Practitioner feedback loop + session logging
-│   └── nl_parser.py        Natural language query parser
+│   ├── nl_parser.py        Natural language query parser
+│   └── llm_backends.py     Claude / Codex / Ollama / offline backend manager
 ├── benchmark/
 │   └── run_benchmark.py    13-scenario benchmark suite
-├── test_datasets/          8 clinical/neuroscience datasets
+├── test_datasets/          15 datasets (9 synthetic + 6 real published)
 ├── generate_datasets.py    Reproducible dataset generator
 ├── requirements.txt
 └── README.md
@@ -356,38 +336,42 @@ rich>=13.0.0
 ```
 
 Optional — for LLM-powered explanations:
+
 ```
-anthropic>=0.20.0
+anthropic>=0.20.0   # --llm claude
+openai>=1.0.0       # --llm codex
+ollama              # --llm ollama
 ```
 
-The tool runs fully offline without an API key. All 9 tests have complete built-in explanations.
+The tool runs fully offline without any API key. All 9 tests have complete built-in explanations.
 
 ---
 
 ## Roadmap
 
-This is a proof of concept submitted for [GSoC 2026 INCF Project #33](https://neurostars.org/t/gsoc-2026-project-33-university-of-wisconsin-madison-astats-an-agentic-ai-approach-to-applied-statistical-practitioner-workflows/35620).
+This is a proof of concept for [GSoC 2026 INCF Project #33](https://neurostars.org/t/gsoc-2026-project-33-university-of-wisconsin-madison-astats-an-agentic-ai-approach-to-applied-statistical-practitioner-workflows/35620).
 
 **Planned for GSoC:**
-- LangGraph agent architecture (Perceive → Plan → Analyse → Reflect → Report)
-- Full tool registry with 12 callable tools
-- R bridge via rpy2 — lme4, BayesFactor, Welch ANOVA
-- Multi-turn session with full context memory
-- Post-hoc tests auto-triggered after significant ANOVA/Kruskal-Wallis
-- Autonomous exploratory mode — no query needed
-- DPO fine-tuning on session correction log (Mistral 7B via Ollama)
-- Next.js + FastAPI streaming web interface
+- [ ] LangGraph agent architecture (Perceive → Plan → Analyse → Reflect → Report)
+- [ ] Full tool registry with 12 callable tools
+- [ ] R bridge via rpy2 — lme4, BayesFactor, Welch ANOVA
+- [ ] Multi-turn session with full context memory
+- [ ] Post-hoc tests auto-triggered after significant ANOVA/Kruskal-Wallis
+- [ ] Autonomous exploratory mode — no query needed
+- [ ] DPO fine-tuning on session correction log (Mistral 7B via Ollama)
+- [ ] Next.js + FastAPI streaming web interface
 
 ---
 
-## Discussions and Questions
+## Discussions
 
-The best place to follow progress and ask questions is the [AStats community on SciCommons](https://alphatest.scicommons.org/community/AStats) and the [Neurostars project thread](https://neurostars.org/t/gsoc-2026-project-33-university-of-wisconsin-madison-astats-an-agentic-ai-approach-to-applied-statistical-practitioner-workflows/35620).
+Follow progress and ask questions at the [AStats community on SciCommons](https://alphatest.scicommons.org/community/AStats) and the [Neurostars project thread](https://neurostars.org/t/gsoc-2026-project-33-university-of-wisconsin-madison-astats-an-agentic-ai-approach-to-applied-statistical-practitioner-workflows/35620).
 
 ---
 
 ## About
 
-Built by **Shreenidhi Gopalakrishnan** as a proof of concept for the AStats GSoC 2026 project under INCF, mentored by Suresh Krishna (McGill), Jonathan Morris (UW-Madison), and Yohai-Eliel Berreby (McGill).
+Built by **Shreenidhi Gopalakrishnan** as a proof of concept for GSoC 2026 INCF Project #33, mentored by Suresh Krishna (McGill), Jonathan Morris (UW-Madison), and Yohai-Eliel Berreby (McGill).
 
 The design is grounded in a real experience: building clinical ML tools that make recommendations without giving practitioners a mechanism to correct them. AStats treats practitioner corrections as first-class data — not noise to filter, but signal to record, learn from, and act on.
+
