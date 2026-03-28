@@ -1,0 +1,17 @@
+{
+  "session_id": "20260328_161728",
+  "corrections": [
+    {
+      "timestamp": "2026-03-28T16:21:34.007628",
+      "dataset": "astats_datasets/test_datasets/01_antidepressant_trial.csv",
+      "query": "compare HDRS score between treatment groups",
+      "recommended_test": "Mann-Whitney U",
+      "action": "overridden",
+      "override_test": "Mann-Whitney U",
+      "override_reason": "Domain knowledge suggests HDRS scores are ordinal not continuous",
+      "final_test": "Mann-Whitney U",
+      "p_value": 0.0,
+      "effect_size": -0.5412
+    }
+  ]
+}

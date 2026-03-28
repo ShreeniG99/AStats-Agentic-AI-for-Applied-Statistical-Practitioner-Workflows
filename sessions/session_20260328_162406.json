@@ -1,0 +1,17 @@
+{
+  "session_id": "20260328_162406",
+  "corrections": [
+    {
+      "timestamp": "2026-03-28T16:24:06.854890",
+      "dataset": "astats_datasets/test_datasets/09_sleepstudy_real.csv",
+      "query": "compare Reaction across Days within subjects",
+      "recommended_test": "Friedman test",
+      "action": "accepted",
+      "override_test": null,
+      "override_reason": null,
+      "final_test": "Friedman test",
+      "p_value": 0.0,
+      "effect_size": 0.8385
+    }
+  ]
+}
