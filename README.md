@@ -352,14 +352,14 @@ The tool runs fully offline without any API key. All 9 tests have complete built
 This is a proof of concept for [GSoC 2026 INCF Project #33](https://neurostars.org/t/gsoc-2026-project-33-university-of-wisconsin-madison-astats-an-agentic-ai-approach-to-applied-statistical-practitioner-workflows/35620).
 
 **Planned for GSoC:**
-- [ ] LangGraph agent architecture (Perceive → Plan → Analyse → Reflect → Report)
-- [ ] Full tool registry with 12 callable tools
-- [ ] R bridge via rpy2 — lme4, BayesFactor, Welch ANOVA
-- [ ] Multi-turn session with full context memory
-- [ ] Post-hoc tests auto-triggered after significant ANOVA/Kruskal-Wallis
-- [ ] Autonomous exploratory mode — no query needed
-- [ ] DPO fine-tuning on session correction log (Mistral 7B via Ollama)
-- [ ] Next.js + FastAPI streaming web interface
+- LangGraph agent architecture (Perceive → Plan → Analyse → Reflect → Report)
+- Full tool registry with 12 callable tools
+- R bridge via rpy2 — lme4, BayesFactor, Welch ANOVA
+- Multi-turn session with full context memory
+- Post-hoc tests auto-triggered after significant ANOVA/Kruskal-Wallis
+- Autonomous exploratory mode — no query needed
+- DPO fine-tuning on session correction log (Mistral 7B via Ollama)
+- Next.js + FastAPI streaming web interface
 
 ---
 
